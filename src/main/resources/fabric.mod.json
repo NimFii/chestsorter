@@ -3,15 +3,15 @@
 	"id": "chestsorter",
 	"version": "${version}",
 	"name": "ChestSorter",
-	"description": "Sorts items to destination chests.",
+	"description": "Lightweight, procedural item logistics mod for Minecraft. It introduces customizable receiver filter configurations, allowing players to precise control how items are sorted and handled across their chest networks.",
 	"authors": [
 		"qNimFi"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "none yet"
+		"homepage": "https://github.com/NimFii/chestsorter",
+		"sources": "https://github.com/NimFii/chestsorter"
 	},
-	"license": "CC0-1.0",
+	"license": "MIT",
 	"icon": "assets/chestsorter/icon.png",
 	"environment": "*",
 	"entrypoints": {

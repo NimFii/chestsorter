@@ -1,0 +1,17 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_breeze_rod": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          { "items": ["minecraft:breeze_rod"] }
+        ]
+      }
+    }
+  },
+  "requirements": [["has_breeze_rod"]],
+  "rewards": {
+    "recipes": ["chestsorter:chest_linker"]
+  }
+}

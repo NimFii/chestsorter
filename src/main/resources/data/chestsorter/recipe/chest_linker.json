@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " #E",
+    " NC",
+    "/  "
+  ],
+  "key": {
+    "#": "minecraft:copper_chest",
+    "E": "minecraft:ender_eye",
+    "N": "minecraft:netherite_hoe",
+    "C": "minecraft:hopper",
+    "/": "minecraft:breeze_rod"
+  },
+  "group": "Instruments",
+  "result": {
+    "id": "chestsorter:chest_linker",
+    "count": 1
+  }
+}

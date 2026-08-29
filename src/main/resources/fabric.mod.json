@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "chestsorter",
+	"version": "${version}",
+	"name": "ChestSorter",
+	"description": "Sorts items to destination chests.",
+	"authors": [
+		"qNimFi"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "none yet"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/chestsorter/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"qnimfi.cs.ChestSorter"
+		],
+		"client": [
+			"qnimfi.cs.client.ChestSorterClient"
+		]
+	},
+	"mixins": [
+		"chestsorter.mixins.json",
+		{
+			"config": "chestsorter.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~26.2",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}

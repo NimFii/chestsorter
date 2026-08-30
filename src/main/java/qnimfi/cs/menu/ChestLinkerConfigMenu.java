@@ -26,6 +26,7 @@ public class ChestLinkerConfigMenu extends AbstractContainerMenu {
 
     private final BlockPos receiverPos;
     private final int slotCount;
+    private final ReceiverConfig receiverConfig; // Kept as field for quick-move logic
 
     /*
      * =========================================================
@@ -36,6 +37,7 @@ public class ChestLinkerConfigMenu extends AbstractContainerMenu {
         super(ModMenuTypes.CHEST_LINKER_CONFIG, syncId);
         this.receiverPos = data.receiverPos();
         this.slotCount = data.slotCount();
+        this.receiverConfig = null; // Client uses container sync data
 
         this.filterContainer = new SimpleContainer(slotCount);
         this.maxCounts = new SimpleContainerData(slotCount);
@@ -47,7 +49,7 @@ public class ChestLinkerConfigMenu extends AbstractContainerMenu {
             @Override public void set(int index, int value) {
                 if (value <= 0) { filterContainer.setItem(index, ItemStack.EMPTY); return; }
                 var item = BuiltInRegistries.ITEM.byId(value - 1);
-                filterContainer.setItem(index, (item == null || item == Items.AIR) ? ItemStack.EMPTY : new ItemStack(item, 1));
+                filterContainer.setItem(index, item == Items.AIR ? ItemStack.EMPTY : new ItemStack(item, 1));
             }
             @Override public int getCount() { return slotCount; }
         };
@@ -57,7 +59,6 @@ public class ChestLinkerConfigMenu extends AbstractContainerMenu {
         addFilterSlots();
         addPlayerInventory(playerInv);
     }
-
 
     /*
      * =========================================================
@@ -73,82 +74,29 @@ public class ChestLinkerConfigMenu extends AbstractContainerMenu {
         super(ModMenuTypes.CHEST_LINKER_CONFIG, syncId);
 
         this.receiverPos = receiverPos;
+        this.receiverConfig = LogisticsManager.getOrCreateReceiverConfig(world, receiverPos);
+        this.slotCount = receiverConfig.getSlotCount();
 
-        ReceiverConfig config =
-                LogisticsManager.getOrCreateReceiverConfig(
-                        world,
-                        receiverPos
-                );
+        this.filterContainer = new FilterContainer(receiverConfig, () -> {});
 
-        this.filterContainer =
-                new FilterContainer(
-                        config,
-                        () -> {}
-                );
-        this.slotCount = config.getSlotCount();
-        /*
-         * Max count synchronization.
-         */
-        this.maxCounts =
-                new ContainerData() {
+        this.maxCounts = new ContainerData() {
+            @Override public int get(int index) {
+                return receiverConfig.getFilter(index).map(FilterEntry::maxCount).orElse(0);
+            }
+            @Override public void set(int index, int value) {}
+            @Override public int getCount() { return slotCount; }
+        };
 
-                    @Override
-                    public int get(int index) {
-
-                        return config
-                                .getFilter(index)
-                                .map(FilterEntry::maxCount)
-                                .orElse(0);
-                    }
-
-                    @Override
-                    public void set(
-                            int index,
-                            int value
-                    ) {
-                        // Client -> server is handled
-                        // through AdjustFilterMaxPayload.
-                    }
-
-                    @Override
-                    public int getCount() { return slotCount; }
-                };
-
-        /*
-         * Filter item synchronization.
-         */
-        this.filterItemIds =
-                new ContainerData() {
-
-                    @Override
-                    public int get(int index) {
-
-                        return config
-                                .getFilter(index)
-                                .map(FilterEntry::item)
-                                .map(item ->
-                                        BuiltInRegistries.ITEM.getId(item) + 1
-                                )
-                                .orElse(0);
-                    }
-
-                    @Override
-                    public void set(
-                            int index,
-                            int value
-                    ) {
-                        // Server doesn't receive these values.
-                    }
-
-                    @Override
-                    public int getCount() {
-                        return slotCount;
-                    }
-                };
+        this.filterItemIds = new ContainerData() {
+            @Override public int get(int index) {
+                return receiverConfig.getFilter(index).map(f -> BuiltInRegistries.ITEM.getId(f.item()) + 1).orElse(0);
+            }
+            @Override public void set(int index, int value) {}
+            @Override public int getCount() { return slotCount; }
+        };
 
         addDataSlots(maxCounts);
         addDataSlots(filterItemIds);
-
         addFilterSlots();
         addPlayerInventory(playerInv);
     }
@@ -186,9 +134,7 @@ public class ChestLinkerConfigMenu extends AbstractContainerMenu {
     }
 
     public Item getFilterItem(int slot) {
-        if (slot < 0 || slot >= slotCount) {
-            return Items.AIR;
-        }
+        if (slot < 0 || slot >= slotCount) return Items.AIR;
         return filterContainer.getItem(slot).getItem();
     }
 
@@ -196,40 +142,55 @@ public class ChestLinkerConfigMenu extends AbstractContainerMenu {
         return maxCounts.get(slot);
     }
 
-
     public BlockPos getReceiverPos() {
         return receiverPos;
     }
 
-
-    /*
-     * Prevent vanilla from ever treating the filter slots
-     * like real inventory slots.
-     *
-     * Our screen handles those clicks separately.
-     */
     @Override
     public void clicked(int slotId, int button, @NonNull ContainerInput clickType, @NonNull Player player) {
-
+        // Block regular item pickup/placement into filter slots via cursor dragging
         if (slotId >= FILTER_SLOT_START && slotId < slotCount) {
+            if (clickType == ContainerInput.QUICK_MOVE) {
+                // Clear filter slot on shift-clicking the filter itself
+                filterContainer.setItem(slotId, ItemStack.EMPTY);
+                return;
+            }
             return;
         }
 
         super.clicked(slotId, button, clickType, player);
     }
 
-
     @Override
     public boolean stillValid(@NonNull Player player) {
         return true;
     }
 
-
     @Override
-    public @NonNull ItemStack quickMoveStack(
-            @NonNull Player player,
-            int index
-    ) {
+    public @NonNull ItemStack quickMoveStack(@NonNull Player player, int index) {
+        Slot slot = this.slots.get(index);
+        if (!slot.hasItem()) {
+            return ItemStack.EMPTY;
+        }
+
+        ItemStack stackInSlot = slot.getItem();
+
+        if (index < slotCount) {
+            // Clicked inside filter slot -> clear it
+            filterContainer.setItem(index, ItemStack.EMPTY);
+        } else {
+            // Clicked inside player inventory -> add to the first available filter slot
+            if (receiverConfig != null && !receiverConfig.containsItem(stackInSlot.getItem())) {
+                int availableSlot = receiverConfig.findFirstAvailableSlot();
+                if (availableSlot != -1) {
+                    receiverConfig.setFilterItem(availableSlot, stackInSlot.getItem());
+                    filterContainer.setItem(availableSlot, new ItemStack(stackInSlot.getItem(), 1));
+                    this.broadcastChanges();
+                }
+            }
+        }
+
         return ItemStack.EMPTY;
     }
+
 }

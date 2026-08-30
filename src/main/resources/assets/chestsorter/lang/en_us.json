@@ -1,3 +1,34 @@
 {
-  "item.chestsorter.chest_linker": "Chest Linker"
+  "item.chestsorter.chest_linker": "§dChest Linker",
+  "tooltip.chestsorter.chest_linker.line1": "§6Crouch + RMB on sender to edit network.",
+  "tooltip.chestsorter.chest_linker.line2": "§6RMB on receivers to configure.",
+
+  "logistics.chestsorter.sender_cleared": "Sorter Chest cleared at %s",
+  "chest_interaction.chestsorter.config_on_sender": "Sender Chest — Crouch + RMB with Chest Linker to edit links.",
+  "chest_interaction.chestsorter.not_sender_owner": "You don't own this sender.",
+  "chest_interaction.chestsorter.connection_mode_on": "Connection mode - ON. Right-click receiver chests.",
+  "chest_interaction.chestsorter.connection_mode_off": "Connection mode - OFF.",
+  "chest_interaction.chestsorter.receiver_connected": "Receiver connected.",
+  "chest_interaction.chestsorter.receiver_disconnected": "Receiver disconnected.",
+  "chest_interaction.chestsorter.receiver_already_connected": "Receiver is already connected.",
+  "chest_interaction.chestsorter.receiver_not_connected": "Receiver isn't connected.",
+  "chest_interaction.chestsorter.receiver_not_owner": "You don't own this sender.",
+  "chest_interaction.chestsorter.receiver_null": "Something went wrong.",
+  "chest_interaction.chestsorter.receiver_config_open": "Receiver configuration.",
+
+  "hud.chestsorter.connection_mode": "§e[Connection Mode] §fRMB on Sender Chest to finish",
+  "hud.chestsorter.action.finish": "§e[RMB to Finish]",
+  "hud.chestsorter.action.connect": "§a[RMB to Connect]",
+  "hud.chestsorter.action.disconnect": "§c[RMB to Disconnect]",
+  "hud.chestsorter.action.make_sender": "§a[Crouch + RMB to make a sender]",
+  "hud.chestsorter.type.unlinked": "§7Type: §fUnlinked Chest",
+  "hud.chestsorter.type.sender": "§bType: §fSender Chest",
+  "hud.chestsorter.type.receiver": "§aType: §fReceiver Chest",
+  "hud.chestsorter.type.both": "§6Type: §eSender & Receiver",
+  "hud.chestsorter.receivers_count": "§7Receivers linked: §f%s",
+  "hud.chestsorter.senders_count": "§7Senders linked: §f%s",
+
+  "menu.chestsorter.tooltip.scroll": "§7Scroll to increase/decrease amount",
+  "menu.chestsorter.tooltip.shift_scroll": "§7Shift + Scroll to increment by 16",
+  "menu.chestsorter.tooltip.filtered_item": "Filtered Item"
 }

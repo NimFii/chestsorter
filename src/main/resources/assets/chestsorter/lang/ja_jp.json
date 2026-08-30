@@ -1,0 +1,35 @@
+{
+  "item.chestsorter.chest_linker": "§dチェストリンカー",
+  "tooltip.chestsorter.chest_linker.line1": "§6スニークしながら送信 chest を右クリックでネットワーク編集。",
+  "tooltip.chestsorter.chest_linker.line2": "§6受信 chest を右クリックで設定。",
+
+  "logistics.chestsorter.sender_cleared": "送信チェストが %s でクリアされました",
+
+  "chest_interaction.chestsorter.config_on_sender": "送信チェスト — チェストリンカーを持ってスニークしながら右クリックでネットワークを編集します。",
+  "chest_interaction.chestsorter.not_sender_owner": "あなたはこの送信機の所有者ではありません。",
+  "chest_interaction.chestsorter.connection_mode_on": "接続モード — ON。受信チェストを右クリックしてください。",
+  "chest_interaction.chestsorter.connection_mode_off": "接続モード — OFF。",
+  "chest_interaction.chestsorter.receiver_connected": "受信機が接続されました。",
+  "chest_interaction.chestsorter.receiver_disconnected": "受信機が切断されました。",
+  "chest_interaction.chestsorter.receiver_already_connected": "受信機は既に接続されています。",
+  "chest_interaction.chestsorter.receiver_not_connected": "受信機は接続されていません。",
+  "chest_interaction.chestsorter.receiver_not_owner": "あなたはこの送信機の所有者ではありません。",
+  "chest_interaction.chestsorter.receiver_null": "エラーが発生しました。",
+  "chest_interaction.chestsorter.receiver_config_open": "受信機の構成。",
+
+  "hud.chestsorter.connection_mode": "§e[接続モード] §f送信チェストを右クリックして終了",
+  "hud.chestsorter.action.finish": "§e[右クリックで終了]",
+  "hud.chestsorter.action.connect": "§a[右クリックで接続]",
+  "hud.chestsorter.action.disconnect": "§c[右クリックで切断]",
+  "hud.chestsorter.action.make_sender": "§a[スニークしながら右クリックで送信機化]",
+  "hud.chestsorter.type.unlinked": "§7種類: §f未連携チェスト",
+  "hud.chestsorter.type.sender": "§b種類: §f送信チェスト",
+  "hud.chestsorter.type.receiver": "§a種類: §f受信チェスト",
+  "hud.chestsorter.type.both": "§6種類: §e送信 & 受信チェスト",
+  "hud.chestsorter.receivers_count": "§7連携受信数: §f%s",
+  "hud.chestsorter.senders_count": "§7連携送信数: §f%s",
+
+  "menu.chestsorter.tooltip.scroll": "§7スクロールで数量を増減",
+  "menu.chestsorter.tooltip.shift_scroll": "§7Shift + スクロールで16個ずつ増減",
+  "menu.chestsorter.tooltip.filtered_item": "フィルター対象アイテム"
+}

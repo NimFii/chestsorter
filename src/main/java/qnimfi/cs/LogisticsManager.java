@@ -2,45 +2,23 @@ package qnimfi.cs;
 
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.status.ServerStatus;
-import net.minecraft.server.commands.MsgCommand;
-import net.minecraft.server.level.ServerEntity;
-import net.minecraft.server.level.ServerEntityGetter;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
-import org.apache.logging.log4j.core.jmx.Server;
-import qnimfi.cs.menu.ChestLinkerConfigMenu;
 import qnimfi.cs.network.NodeLinkData;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 public class LogisticsManager {
 
     private static ChestSorterData getData(ServerLevel world) {
-
-        ChestSorter.LOGGER.info(
-                "Getting ChestSorter SavedData for world: {}",
-                world.dimension().identifier()
-        );
-
-        ChestSorterData data = world.getDataStorage().computeIfAbsent(
+        return world.getDataStorage().computeIfAbsent(
                 ChestSorterData.TYPE
         );
-
-        ChestSorter.LOGGER.info(
-                "ChestSorter SavedData obtained. Nodes: {}, dirty: {}",
-                data.nodes.size(),
-                data.isDirty()
-        );
-
-        return data;
     }
 
     public static LogisticsNode getNode(
@@ -146,6 +124,19 @@ public class LogisticsManager {
         }
 
         sender.removeReceiver(receiverPos);
+
+        if (sender.getReceivers().isEmpty()) {
+            data.removeNode(senderPos);
+
+            // Clear active selection if this was the player's active sender
+            LinkerState state = LinkerState.get(player);
+            if (senderPos.equals(state.getSelectedSender())) {
+                state.setSelectedSender(null);
+                player.sendSystemMessage(Component.translatable("chest_interaction.chestsorter.connection_mode_off"));
+            }
+
+            ChestSorter.LOGGER.info("Sender Chest cleared automatically (zero receivers left) at {}", senderPos);
+        }
         data.setDirty();
 
         return ConnectionResult.DISCONNECTED;
@@ -184,7 +175,7 @@ public class LogisticsManager {
             data.removeNode(pos);
             ChestSorter.LOGGER.info("Sorter Chest (sender) cleared at {}", pos);
             if (ownerPlayer != null) {
-                ownerPlayer.sendSystemMessage(Component.literal("Sorter Chest cleared at " + pos.toShortString()));
+                ownerPlayer.sendSystemMessage(Component.translatable("logistics.chestsorter.sender_cleared", pos.toShortString()));
             }
         }
 

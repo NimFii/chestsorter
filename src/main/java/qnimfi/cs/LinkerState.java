@@ -1,50 +1,44 @@
 package qnimfi.cs;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+
+import java.lang.foreign.Linker;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class LinkerState {
 
-    private static final LinkerMode[] MODES = LinkerMode.values();
-
-    private LinkerMode mode = LinkerMode.CONNECT;
     private static final Map<UUID, LinkerState> STATES = new HashMap<>();
-    private net.minecraft.core.BlockPos selectedSender;
-
-    public LinkerMode getMode() {
-        return mode;
-    }
-
-    public void setMode(LinkerMode mode) {
-        this.mode = mode;
-    }
-
-    // direction: +1 scroll up, -1 scroll down
-    public void cycleMode(int direction) {
-        int size = MODES.length;
-        int next = ((mode.ordinal() + direction) % size + size) % size;
-        mode = MODES[next];
-    }
+    private BlockPos selectedSender;
 
     public static LinkerState get(ServerPlayer player) {
-        return STATES.computeIfAbsent(player.getUUID(), uuid -> new LinkerState());
+        return STATES.computeIfAbsent(player.getUUID(), _ -> new LinkerState());
     }
 
-    public net.minecraft.core.BlockPos getSelectedSender() {
+    public void setSelectedSender(BlockPos pos) {
+        this.selectedSender = pos;
+    }
+
+    public BlockPos getSelectedSender() {
         return selectedSender;
-    }
-
-    public void setSelectedSender(net.minecraft.core.BlockPos selectedSender) {
-        this.selectedSender = selectedSender;
-    }
-
-    public void clear() {
-        selectedSender = null;
     }
 
     public boolean hasSender() {
         return selectedSender != null;
     }
+
+    public static void clear(ServerPlayer player) {
+        STATES.remove(player.getUUID());
+    }
+
+
+
+    // direction: +1 scroll up, -1 scroll down
+    //public void cycleMode(int direction) {
+    //    int size = MODES.length;
+    //    int next = ((mode.ordinal() + direction) % size + size) % size;
+    //    mode = MODES[next];
+    //}
 }

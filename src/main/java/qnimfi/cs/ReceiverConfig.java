@@ -48,6 +48,13 @@ public class ReceiverConfig {
             return;
         }
 
+        // Prevent duplicate item types across different filter slots
+        for (Map.Entry<Integer, FilterEntry> entry : filters.entrySet()) {
+            if (!entry.getKey().equals(slot) && entry.getValue().item() == item) {
+                return;
+            }
+        }
+
         int keepMax = filters.containsKey(slot) ? filters.get(slot).maxCount() : DEFAULT_MAX;
         filters.put(slot, new FilterEntry(item, keepMax));
     }
@@ -59,6 +66,17 @@ public class ReceiverConfig {
     }
 
     public boolean acceptsItem(Item item) {
+        return filters.values().stream().anyMatch(f -> f.item() == item);
+    }
+
+    public int findFirstAvailableSlot() {
+        for (int i = 0; i < slotCount; i++) {
+            if (!filters.containsKey(i)) return i;
+        }
+        return -1;
+    }
+
+    public boolean containsItem(Item item) {
         return filters.values().stream().anyMatch(f -> f.item() == item);
     }
 

@@ -18,8 +18,8 @@ public abstract class LevelMixin {
             at = @At("HEAD"))
     private void chestsorter$onSetBlock(
             BlockPos pos,
-            BlockState newState,
-            int flags,
+            BlockState blockState,
+            int updateFlags,
             CallbackInfoReturnable<Boolean> cir
     ) {
         Level self = (Level) (Object) this;
@@ -40,7 +40,7 @@ public abstract class LevelMixin {
             return;
         }
 
-        if (newState.is(Blocks.CHEST)) {
+        if (blockState.is(Blocks.CHEST)) {
             // Still a chest (e.g. a state-only update), nothing to clean up.
             return;
         }

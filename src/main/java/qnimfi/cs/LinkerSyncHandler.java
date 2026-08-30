@@ -2,25 +2,22 @@ package qnimfi.cs;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import qnimfi.cs.item.ModItems;
 import qnimfi.cs.network.LinkerSyncPayload;
 import qnimfi.cs.network.NodeLinkData;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+
 
 public class LinkerSyncHandler {
 
-    private static final int SYNC_INTERVAL_TICKS = 10;
+    private static final int SYNC_INTERVAL_TICKS = 1;
 
-    // Players we last told "you have active links" — so we know
-    // who needs an empty-list packet once they stop holding the linker.
     private static final Set<UUID> ACTIVELY_SYNCED = new HashSet<>();
-
     private static int tickCounter = 0;
 
     public static void initialize() {
@@ -39,24 +36,22 @@ public class LinkerSyncHandler {
     }
 
     private static void handlePlayer(ServerPlayer player) {
-
-        boolean holdingLinker =
-                player.getItemInHand(InteractionHand.MAIN_HAND).is(ModItems.CHEST_LINKER);
-
+        boolean holdingLinker = player.getItemInHand(InteractionHand.MAIN_HAND).is(ModItems.CHEST_LINKER);
         UUID uuid = player.getUUID();
+        LinkerState state = LinkerState.get(player);
 
         if (!holdingLinker) {
-            // If we previously sent them data, clear it now.
             if (ACTIVELY_SYNCED.remove(uuid)) {
-                ServerPlayNetworking.send(player, new LinkerSyncPayload(List.of()));
+                ServerPlayNetworking.send(player, new LinkerSyncPayload(List.of(), Optional.empty()));
             }
             return;
         }
 
         ServerLevel world = player.level();
-        List<NodeLinkData> owned = LogisticsManager.getOwnedNodeLinks(world, uuid);
+        List<NodeLinkData> ownedNodes = LogisticsManager.getOwnedNodeLinks(world, uuid);
+        Optional<BlockPos> activeSender = Optional.ofNullable(state.getSelectedSender());
 
         ACTIVELY_SYNCED.add(uuid);
-        ServerPlayNetworking.send(player, new LinkerSyncPayload(owned));
+        ServerPlayNetworking.send(player, new LinkerSyncPayload(ownedNodes, activeSender));
     }
 }

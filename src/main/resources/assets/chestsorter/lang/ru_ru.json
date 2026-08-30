@@ -1,0 +1,35 @@
+{
+  "item.chestsorter.chest_linker": "§dСоединитель сундуков",
+  "tooltip.chestsorter.chest_linker.line1": "§6Присяд + ПКМ на отсылатель для редактирования сети.",
+  "tooltip.chestsorter.chest_linker.line2": "§6ПКМ на приниматель для конфигурации.",
+
+  "logistics.chestsorter.sender_cleared": "Сортировочный сундук удалён на %s",
+
+  "chest_interaction.chestsorter.config_on_sender": "Сундук отправителя — Присяд + ПКМ с помощью Соединителя сундуков, чтобы редактировать сеть.",
+  "chest_interaction.chestsorter.not_sender_owner": "Вы не являетесь владельцем этого отправителя.",
+  "chest_interaction.chestsorter.connection_mode_on": "Режим соединения — ВКЛ. ПКМ по сундукам принимателям.",
+  "chest_interaction.chestsorter.connection_mode_off": "Режим соединения — ВЫКЛ.",
+  "chest_interaction.chestsorter.receiver_connected": "Приниматель подсоединён.",
+  "chest_interaction.chestsorter.receiver_disconnected": "Приниматель отсоединён.",
+  "chest_interaction.chestsorter.receiver_already_connected": "Приниматель уже подсоединён.",
+  "chest_interaction.chestsorter.receiver_not_connected": "Приниматель не подсоединён.",
+  "chest_interaction.chestsorter.receiver_not_owner": "Вы не являетесь владельцем этого отправителя.",
+  "chest_interaction.chestsorter.receiver_null": "Что-то пошло не так.",
+  "chest_interaction.chestsorter.receiver_config_open": "Настройка принимателя.",
+
+  "hud.chestsorter.connection_mode": "§e[Режим соединения] §fПКМ на сундуке отправителя для завершения",
+  "hud.chestsorter.action.finish": "§e[ПКМ, чтобы завершить]",
+  "hud.chestsorter.action.connect": "§a[ПКМ, чтобы соединить]",
+  "hud.chestsorter.action.disconnect": "§c[ПКМ, чтобы отсоединить]",
+  "hud.chestsorter.action.make_sender": "§a[Присесть + ПКМ, чтобы создать отправитель]",
+  "hud.chestsorter.type.unlinked": "§7Тип: §fОбычный сундук",
+  "hud.chestsorter.type.sender": "§bТип: §fСундук — Отправитель",
+  "hud.chestsorter.type.receiver": "§aТип: §fСундук — Приёмник",
+  "hud.chestsorter.type.both": "§6Тип: §Отправитель и приниматель",
+  "hud.chestsorter.receivers_count": "§7Связанные приёмники: §f%s",
+  "hud.chestsorter.senders_count": "§7Связанные отправители: §f%s",
+
+  "menu.chestsorter.tooltip.scroll": "§7Колёсико для увеличения/уменьшения суммы",
+  "menu.chestsorter.tooltip.shift_scroll": "§7Shift + колёсико для увеличения на 16",
+  "menu.chestsorter.tooltip.filtered_item": "Фильтрованный предмет"
+}

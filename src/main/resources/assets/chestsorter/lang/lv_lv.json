@@ -1,0 +1,35 @@
+{
+  "item.chestsorter.chest_linker": "§dLādes savienotājs",
+  "tooltip.chestsorter.chest_linker.line1": "§6Piesēst + lab.pel.taust. uz sūtītāja, lai rediģētu tīklu.",
+  "tooltip.chestsorter.chest_linker.line2": "§6Lab.pel.taust. uz saņēmējiem, lai konfigurētu.",
+
+  "logistics.chestsorter.sender_cleared": "Šķirošanas lāde notīrīta %s",
+
+  "chest_interaction.chestsorter.config_on_sender": "Sūtītāja lāde — Piesēst + lab.pel.taust. ar lādes savienotāju, lai rediģētu tīklu.",
+  "chest_interaction.chestsorter.not_sender_owner": "Jūs neesat šī sūtītāja īpašnieks.",
+  "chest_interaction.chestsorter.connection_mode_on": "Savienojuma režīms — IESLĒGTS. Lab.pel.taust. uz saņēmēja lādēm.",
+  "chest_interaction.chestsorter.connection_mode_off": "Savienojuma režīms — IZSLĒGTS.",
+  "chest_interaction.chestsorter.receiver_connected": "Saņēmējs pievienots.",
+  "chest_interaction.chestsorter.receiver_disconnected": "Saņēmējs atvienots.",
+  "chest_interaction.chestsorter.receiver_already_connected": "Saņēmējs jau ir pievienots.",
+  "chest_interaction.chestsorter.receiver_not_connected": "Saņēmējs nav pievienots.",
+  "chest_interaction.chestsorter.receiver_not_owner": "Jūs neesat šī sūtītāja īpašnieks.",
+  "chest_interaction.chestsorter.receiver_null": "Kaut kas nogāja greizi.",
+  "chest_interaction.chestsorter.receiver_config_open": "Saņēmēja iestatījumi.",
+
+  "hud.chestsorter.connection_mode": "§e[Savienojuma režīms] §fLabais klikšķis uz sūtītāja lādi, lai pabeigtu",
+  "hud.chestsorter.action.finish": "§e[Labais klikšķis, lai pabeigtu]",
+  "hud.chestsorter.action.connect": "§a[Labais klikšķis, lai savienotu]",
+  "hud.chestsorter.action.disconnect": "§c[Labais klikšķis, lai atvienotu]",
+  "hud.chestsorter.action.make_sender": "§a[Piesēst + labais klikšķis, lai izveidotu sūtītāju]",
+  "hud.chestsorter.type.unlinked": "§7Tips: §fNesaistīta lāde",
+  "hud.chestsorter.type.sender": "§bTips: §fSūtītāja lāde",
+  "hud.chestsorter.type.receiver": "§aTips: §fSaņēmēja lāde",
+  "hud.chestsorter.type.both": "§6Tips: §eSūtītājs un Saņēmējs",
+  "hud.chestsorter.receivers_count": "§7Saistītie saņēmēji: §f%s",
+  "hud.chestsorter.senders_count": "§7Saistītie sūtītāji: §f%s",
+
+  "menu.chestsorter.tooltip.scroll": "§7Ritināt vid.pel., lai palielinātu/samazinātu daudzumu",
+  "menu.chestsorter.tooltip.shift_scroll": "§7Shift + Ritināt, lai mainītu par 16",
+  "menu.chestsorter.tooltip.filtered_item": "Filtrētais priekšmets"
+}

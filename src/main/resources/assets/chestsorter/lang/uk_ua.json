@@ -1,0 +1,35 @@
+{
+  "item.chestsorter.chest_linker": "§dЗ'єднувач скринь",
+  "tooltip.chestsorter.chest_linker.line1": "§6Присісти + ПКМ на відправник для редагування мережі.",
+  "tooltip.chestsorter.chest_linker.line2": "§6ПКМ на приймач для конфігурації.",
+
+  "logistics.chestsorter.sender_cleared": "Сортувальну скриню видалено на %s",
+
+  "chest_interaction.chestsorter.config_on_sender": "Скриня-відправник — Присісти + ПКМ за допомогою З'єднувача скринь для редагування мережі.",
+  "chest_interaction.chestsorter.not_sender_owner": "Ви не є власником цього відправника.",
+  "chest_interaction.chestsorter.connection_mode_on": "Режим з'єднання — УВІМК. ПКМ по скринях-приймачах.",
+  "chest_interaction.chestsorter.connection_mode_off": "Режим з'єднання — ВИМК.",
+  "chest_interaction.chestsorter.receiver_connected": "Приймач під'єднано.",
+  "chest_interaction.chestsorter.receiver_disconnected": "Приймач від'єднано.",
+  "chest_interaction.chestsorter.receiver_already_connected": "Приймач уже під'єднано.",
+  "chest_interaction.chestsorter.receiver_not_connected": "Приймач не під'єднано.",
+  "chest_interaction.chestsorter.receiver_not_owner": "Ви не є власником цього відправника.",
+  "chest_interaction.chestsorter.receiver_null": "Щось пішло не так.",
+  "chest_interaction.chestsorter.receiver_config_open": "Налаштування приймача.",
+
+  "hud.chestsorter.connection_mode": "§e[Режим підключення] §fПКМ по скрині-відправнику для завершення",
+  "hud.chestsorter.action.finish": "§e[ПКМ для завершення]",
+  "hud.chestsorter.action.connect": "§a[ПКМ щоб підключити]",
+  "hud.chestsorter.action.disconnect": "§c[ПКМ щоб відключити]",
+  "hud.chestsorter.action.make_sender": "§a[Присісти + ПКМ щоб зробити відправником]",
+  "hud.chestsorter.type.unlinked": "§7Тип: §fНепов'язана скриня",
+  "hud.chestsorter.type.sender": "§bТип: §fСкриня-відправник",
+  "hud.chestsorter.type.receiver": "§aТип: §fСкриня-одержувач",
+  "hud.chestsorter.type.both": "§6Тип: §eВідправник і Одержувач",
+  "hud.chestsorter.receivers_count": "§7Підключено одержувачів: §f%s",
+  "hud.chestsorter.senders_count": "§7Підключено відправників: §f%s",
+
+  "menu.chestsorter.tooltip.scroll": "§7Колещатко миші: змінити кількість",
+  "menu.chestsorter.tooltip.shift_scroll": "§7Shift + Колещатко: змінити на 16",
+  "menu.chestsorter.tooltip.filtered_item": "Фільтрований предмет"
+}

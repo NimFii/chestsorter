@@ -3,10 +3,12 @@ package qnimfi.cs.client;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
@@ -19,7 +21,12 @@ import qnimfi.cs.menu.ChestLinkerGuiLayout;
 import qnimfi.cs.network.AdjustFilterMaxPayload;
 import qnimfi.cs.network.SetFilterPayload;
 
+import java.util.List;
+
 public class ChestLinkerConfigScreen extends AbstractContainerScreen<ChestLinkerConfigMenu> {
+
+    private int typingSlotIndex = -1;
+    private String typingBuffer = "";
 
     public ChestLinkerConfigScreen(ChestLinkerConfigMenu menu, Inventory inventory, Component title) {
         super(
@@ -122,7 +129,14 @@ public class ChestLinkerConfigScreen extends AbstractContainerScreen<ChestLinker
 
     @Override
     public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+        Slot cachedSlot = this.hoveredSlot;
+        if (cachedSlot != null && cachedSlot.index >= 0 && cachedSlot.index < menu.getSlotCount()) {
+            this.hoveredSlot = null; // Hide from vanilla tooltip system completely
+        }
+
         super.extractRenderState(graphics, mouseX, mouseY, delta);
+
+        this.hoveredSlot = cachedSlot; // Restore for click handling
 
         int columns = ChestLinkerGuiLayout.FILTER_COLUMNS;
         int filterY = ChestLinkerGuiLayout.FILTER_ROW_Y;
@@ -131,29 +145,147 @@ public class ChestLinkerConfigScreen extends AbstractContainerScreen<ChestLinker
             if (menu.getFilterItem(i) == Items.AIR) continue;
 
             int max = menu.getMaxCount(i);
-            if (max <= 0) max = 64; // Fallback display default
+            if (max <= 0) max = 64;
 
             int row = i / columns;
             int col = i % columns;
             int slotsInRow = Math.min(columns, menu.getSlotCount() - row * columns);
             int rowOffset = (columns - slotsInRow) * 9;
 
-            // Calculate absolute screen position
             int screenX = leftPos + 8 + rowOffset + col * 18;
             int screenY = topPos + filterY + row * 18;
 
-            String text = String.valueOf(max);
-            int textWidth = font.width(text);
+            // SHOW TYPING BUFFER INSTEAD OF SAVED VALUE IF APPLICABLE
+            String text = (i == typingSlotIndex && !typingBuffer.isEmpty()) ? typingBuffer : String.valueOf(max);
 
-            // Render opaque white text with drop shadow in bottom-right corner of the slot
+            // 0xFFFFFF00 is yellow to visually indicate they are editing the number
+            int textColor = (i == typingSlotIndex && !typingBuffer.isEmpty()) ? 0xFFFFFF00 : 0xFFFFFFFF;
+
+            int textWidth = font.width(text);
             graphics.text(
                     font,
                     text,
                     screenX + 17 - textWidth,
                     screenY + 9,
-                    0xFFFFFFFF, // Fully opaque white
+                    textColor,
                     true
             );
         }
+    }
+
+    @Override
+    protected void extractTooltip(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+        if (this.hoveredSlot != null && this.hoveredSlot.index >= 0 && this.hoveredSlot.index < menu.getSlotCount()) {
+            if (this.hoveredSlot.hasItem()) {
+                ItemStack item = this.hoveredSlot.getItem();
+                List<Component> tooltip = new java.util.ArrayList<>();
+
+                // Header line
+                tooltip.add(Component.translatable("menu.chestsorter.tooltip.filtered_item").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
+
+                // Item name
+                tooltip.add(item.getHoverName());
+
+                // Eye-catching instructions in different colors
+                tooltip.add(Component.translatable("menu.chestsorter.tooltip.scroll").withStyle(ChatFormatting.YELLOW));
+                tooltip.add(Component.translatable("menu.chestsorter.tooltip.shift_scroll").withStyle(ChatFormatting.AQUA));
+
+                graphics.setTooltipForNextFrame(
+                        this.font,
+                        tooltip,
+                        item.getTooltipImage(),
+                        mouseX,
+                        mouseY,
+                        item.get(DataComponents.TOOLTIP_STYLE)
+                );
+            }
+            return;
+        }
+        super.extractTooltip(graphics, mouseX, mouseY);
+    }
+
+    @Override
+    public boolean keyPressed(net.minecraft.client.input.@NonNull KeyEvent event) {
+        double mouseX = minecraft.mouseHandler.xpos() * (double) minecraft.getWindow().getGuiScaledWidth() / (double) minecraft.getWindow().getScreenWidth();
+        double mouseY = minecraft.mouseHandler.ypos() * (double) minecraft.getWindow().getGuiScaledHeight() / (double) minecraft.getWindow().getScreenHeight();
+
+        int slot = getFilterSlotAt(mouseX, mouseY);
+        if (slot >= 0 && slot < menu.getSlotCount() && menu.getFilterItem(slot) != Items.AIR) {
+            int key = event.key();
+
+            // Commit on Enter or Numpad Enter if we are actively typing in this slot
+            if ((key == org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER || key == org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ENTER) && typingSlotIndex == slot) {
+                commitTypedAmount();
+                return true;
+            }
+
+            char digit = '\0';
+
+            // Check standard number row
+            if (key >= org.lwjgl.glfw.GLFW.GLFW_KEY_0 && key <= org.lwjgl.glfw.GLFW.GLFW_KEY_9) {
+                digit = (char) ('0' + (key - org.lwjgl.glfw.GLFW.GLFW_KEY_0));
+            }
+            // Check numpad
+            else if (key >= org.lwjgl.glfw.GLFW.GLFW_KEY_KP_0 && key <= org.lwjgl.glfw.GLFW.GLFW_KEY_KP_9) {
+                digit = (char) ('0' + (key - org.lwjgl.glfw.GLFW.GLFW_KEY_KP_0));
+            }
+
+            if (digit != '\0') {
+                if (typingSlotIndex != slot) {
+                    commitTypedAmount();
+                    typingSlotIndex = slot;
+                    typingBuffer = "";
+                }
+
+                if (typingBuffer.length() < 4) {
+                    typingBuffer += digit;
+                }
+                return true;
+            }
+
+            if (key == org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSPACE && typingSlotIndex == slot && !typingBuffer.isEmpty()) {
+                typingBuffer = typingBuffer.substring(0, typingBuffer.length() - 1);
+                return true;
+            }
+        }
+        return super.keyPressed(event);
+    }
+
+    private void commitTypedAmount() {
+        if (typingSlotIndex != -1 && !typingBuffer.isEmpty()) {
+            try {
+                int newValue = Integer.parseInt(typingBuffer);
+                int currentValue = menu.getMaxCount(typingSlotIndex);
+                int delta = newValue - currentValue;
+
+                if (delta != 0) {
+                    net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.send(
+                            new qnimfi.cs.network.AdjustFilterMaxPayload(typingSlotIndex, delta)
+                    );
+                }
+            } catch (NumberFormatException ignored) {}
+
+            typingBuffer = "";
+            typingSlotIndex = -1;
+        }
+    }
+
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        if (typingSlotIndex != -1) {
+            double mouseX = minecraft.mouseHandler.xpos() * (double) minecraft.getWindow().getGuiScaledWidth() / (double) minecraft.getWindow().getScreenWidth();
+            double mouseY = minecraft.mouseHandler.ypos() * (double) minecraft.getWindow().getGuiScaledHeight() / (double) minecraft.getWindow().getScreenHeight();
+
+            if (getFilterSlotAt(mouseX, mouseY) != typingSlotIndex) {
+                commitTypedAmount();
+            }
+        }
+    }
+
+    @Override
+    public void onClose() {
+        commitTypedAmount();
+        super.onClose();
     }
 }

@@ -1,9 +1,10 @@
-package qnimfi.cs;
+package qnimfi.cs.item;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
+import qnimfi.cs.ChestSorter;
 
 public class ModItemIds {
 

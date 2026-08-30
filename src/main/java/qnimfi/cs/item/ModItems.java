@@ -1,4 +1,4 @@
-package qnimfi.cs;
+package qnimfi.cs.item;
 
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.minecraft.core.Registry;
@@ -22,15 +22,16 @@ public class ModItems {
         return item;
     }
 
+
     public static final Item CHEST_LINKER = register(
             ModItemIds.CHEST_LINKER,
             Item::new,
-            new Item.Properties()
+            new Item.Properties().stacksTo(1)
     );
 
     public static void initialize() {
 
-        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.INGREDIENTS)
+        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.TOOLS_AND_UTILITIES)
                 .register(creativeTab ->
                         creativeTab.accept(CHEST_LINKER)
                 );

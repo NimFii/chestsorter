@@ -3,6 +3,7 @@ package qnimfi.cs.menu;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.jspecify.annotations.NonNull;
 import qnimfi.cs.ReceiverConfig;
 
 public class FilterContainer implements Container {
@@ -29,14 +30,14 @@ public class FilterContainer implements Container {
     }
 
     @Override
-    public ItemStack getItem(int slot) {
+    public @NonNull ItemStack getItem(int slot) {
         return config.getFilter(slot)
                 .map(f -> new ItemStack(f.item(), 1))
                 .orElse(ItemStack.EMPTY);
     }
 
     @Override
-    public ItemStack removeItem(int slot, int amount) {
+    public @NonNull ItemStack removeItem(int slot, int amount) {
         ItemStack existing = getItem(slot);
         config.setFilterItem(slot, Items.AIR);
         onChange.run();
@@ -44,7 +45,7 @@ public class FilterContainer implements Container {
     }
 
     @Override
-    public ItemStack removeItemNoUpdate(int slot) {
+    public @NonNull ItemStack removeItemNoUpdate(int slot) {
         return removeItem(slot, 1);
     }
 

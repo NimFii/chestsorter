@@ -42,7 +42,7 @@ public class LinkerSyncHandler {
 
         if (!holdingLinker) {
             if (ACTIVELY_SYNCED.remove(uuid)) {
-                ServerPlayNetworking.send(player, new LinkerSyncPayload(List.of(), Optional.empty()));
+                ServerPlayNetworking.send(player, new LinkerSyncPayload(List.of(), Optional.empty(), Map.of()));
             }
             return;
         }
@@ -51,7 +51,22 @@ public class LinkerSyncHandler {
         List<NodeLinkData> ownedNodes = LogisticsManager.getOwnedNodeLinks(world, uuid);
         Optional<BlockPos> activeSender = Optional.ofNullable(state.getSelectedSender());
 
+        // Fetch raw receiver configs
+        Map<BlockPos, ReceiverConfig> rawConfigs = LogisticsManager.getReceiverConfigsForPlayer(world, uuid);
+
+        // Convert Map<BlockPos, ReceiverConfig> to Map<BlockPos, List<LinkerSyncPayload.ClientFilterEntry>>
+        Map<BlockPos, List<LinkerSyncPayload.ClientFilterEntry>> receiverFilters = new java.util.HashMap<>();
+        for (var entry : rawConfigs.entrySet()) {
+            ReceiverConfig config = entry.getValue();
+            List<LinkerSyncPayload.ClientFilterEntry> filterEntries = new java.util.ArrayList<>();
+
+            for (int i = 0; i < config.getSlotCount(); i++) {
+                config.getFilter(i).ifPresent(filter -> filterEntries.add(new LinkerSyncPayload.ClientFilterEntry(filter.item(), filter.type())));
+            }
+            receiverFilters.put(entry.getKey(), filterEntries);
+        }
+
         ACTIVELY_SYNCED.add(uuid);
-        ServerPlayNetworking.send(player, new LinkerSyncPayload(ownedNodes, activeSender));
+        ServerPlayNetworking.send(player, new LinkerSyncPayload(ownedNodes, activeSender, receiverFilters));
     }
 }

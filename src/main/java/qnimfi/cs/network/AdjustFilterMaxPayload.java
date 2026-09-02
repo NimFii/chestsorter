@@ -5,6 +5,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.NonNull;
 import qnimfi.cs.ChestSorter;
 
 public record AdjustFilterMaxPayload(int slot, int delta) implements CustomPacketPayload {
@@ -20,7 +21,7 @@ public record AdjustFilterMaxPayload(int slot, int delta) implements CustomPacke
             );
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public @NonNull Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 }

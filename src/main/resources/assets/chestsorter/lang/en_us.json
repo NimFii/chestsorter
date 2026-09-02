@@ -4,6 +4,7 @@
   "tooltip.chestsorter.chest_linker.line2": "§6RMB on receivers to configure.",
 
   "logistics.chestsorter.sender_cleared": "Sorter Chest cleared at %s",
+
   "chest_interaction.chestsorter.config_on_sender": "Sender Chest — Crouch + RMB with Chest Linker to edit links.",
   "chest_interaction.chestsorter.not_sender_owner": "You don't own this sender.",
   "chest_interaction.chestsorter.connection_mode_on": "Connection mode - ON. Right-click receiver chests.",
@@ -15,6 +16,10 @@
   "chest_interaction.chestsorter.receiver_not_owner": "You don't own this sender.",
   "chest_interaction.chestsorter.receiver_null": "Something went wrong.",
   "chest_interaction.chestsorter.receiver_config_open": "Receiver configuration.",
+  "chest_interaction.chestsorter.receiver_config_settings": "Receiver settings.",
+  "chest_interaction.chestsorter.out_of_reach": "You are to far from the sender. Aborting connection.",
+  "chest_interaction.chestsorter.sender_missing": "Sender missing. Aborting connection.",
+  "chest_interaction.chestsorter.connection_timeout": "Idle for too long. Aborting connection.",
 
   "hud.chestsorter.connection_mode": "§e[Connection Mode] §fRMB on Sender Chest to finish",
   "hud.chestsorter.action.finish": "§e[RMB to Finish]",
@@ -30,5 +35,39 @@
 
   "menu.chestsorter.tooltip.scroll": "§7Scroll to increase/decrease amount",
   "menu.chestsorter.tooltip.shift_scroll": "§7Shift + Scroll to increment by 16",
-  "menu.chestsorter.tooltip.filtered_item": "Filtered Item"
+  "menu.chestsorter.tooltip.filtered_item": "Filtered Item",
+
+  "gui.chestsorter.confirm": "Confirm",
+  "gui.chestsorter.cancel": "Cancel",
+  "gui.chestsorter.settings": "Settings",
+  "gui.chestsorter.return": "Return",
+  "gui.chestsorter.authority": "Authority",
+  "gui.chestsorter.loading": "Loading...",
+
+  "gui.chestsorter.permission.gizmos": "Gizmos",
+  "gui.chestsorter.permission.filter": "Filter",
+  "gui.chestsorter.permission.settings": "Settings",
+  "gui.chestsorter.permission.authority": "Authority",
+  "gui.chestsorter.permission.connect": "Connect",
+  "gui.chestsorter.state.on": "ON",
+  "gui.chestsorter.state.off": "OFF",
+
+  "gui.chestsorter.tooltip.settings_header": "Receiver Settings",
+  "gui.chestsorter.tooltip.settings_authority_slot": "• Authority Slot: Determines security override.",
+  "gui.chestsorter.tooltip.authority_header": "Authority Control",
+  "gui.chestsorter.tooltip.authority_desc": "• Click a player to configure permissions.",
+  "gui.chestsorter.tooltip.guide_header": "Receiver Guide",
+  "gui.chestsorter.tooltip.guide_only": "• ONLY: Accepts specified item up to max count.",
+  "gui.chestsorter.tooltip.guide_except": "• EXCEPT: Accepts everything except specified items.",
+  "gui.chestsorter.tooltip.guide_burn": "• BURN: Permanently destroys matching items.",
+  "gui.chestsorter.tooltip.guide_scroll": "• Scroll slots to adjust max amounts.",
+  "gui.chestsorter.tooltip.authority_slot_header": "Authority",
+  "gui.chestsorter.tooltip.authority_slot_desc": "Manage who can use this receiver.",
+  "gui.chestsorter.tooltip.cycle_mode": "Ctrl + Left-Click to cycle mode",
+  "gui.chestsorter.tooltip.except_warning": "Warning: Ineffective when ONLY filters are present!",
+  "gui.chestsorter.tooltip.destroys_warning": "Destroys matching items!",
+
+  "gui.chestsorter.burn.title": "BURN MODE WARNING",
+  "gui.chestsorter.burn.message": "Matching items will be permanently destroyed!",
+  "gui.chestsorter.burn.confirm_question": "Are you sure you want to proceed?"
 }

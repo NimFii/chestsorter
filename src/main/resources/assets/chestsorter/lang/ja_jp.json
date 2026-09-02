@@ -16,6 +16,10 @@
   "chest_interaction.chestsorter.receiver_not_owner": "あなたはこの送信機の所有者ではありません。",
   "chest_interaction.chestsorter.receiver_null": "エラーが発生しました。",
   "chest_interaction.chestsorter.receiver_config_open": "受信機の構成。",
+  "chest_interaction.chestsorter.receiver_config_settings": "受信機の設定。",
+  "chest_interaction.chestsorter.out_of_reach": "送信機から離れすぎています。接続を中止します。",
+  "chest_interaction.chestsorter.sender_missing": "送信機が見つかりません。接続を中止します。",
+  "chest_interaction.chestsorter.connection_timeout": "長時間操作がなかったため、接続を中止します。",
 
   "hud.chestsorter.connection_mode": "§e[接続モード] §f送信チェストを右クリックして終了",
   "hud.chestsorter.action.finish": "§e[右クリックで終了]",
@@ -31,5 +35,39 @@
 
   "menu.chestsorter.tooltip.scroll": "§7スクロールで数量を増減",
   "menu.chestsorter.tooltip.shift_scroll": "§7Shift + スクロールで16個ずつ増減",
-  "menu.chestsorter.tooltip.filtered_item": "フィルター対象アイテム"
+  "menu.chestsorter.tooltip.filtered_item": "フィルター対象アイテム",
+
+  "gui.chestsorter.confirm": "確認",
+  "gui.chestsorter.cancel": "キャンセル",
+  "gui.chestsorter.settings": "設定",
+  "gui.chestsorter.return": "戻る",
+  "gui.chestsorter.authority": "権限",
+  "gui.chestsorter.loading": "読み込み中...",
+
+  "gui.chestsorter.permission.gizmos": "ギズモ表示",
+  "gui.chestsorter.permission.filter": "フィルター",
+  "gui.chestsorter.permission.settings": "設定",
+  "gui.chestsorter.permission.authority": "権限",
+  "gui.chestsorter.permission.connect": "接続",
+  "gui.chestsorter.state.on": "ON",
+  "gui.chestsorter.state.off": "OFF",
+
+  "gui.chestsorter.tooltip.settings_header": "受信機の設定",
+  "gui.chestsorter.tooltip.settings_authority_slot": "・権限スロット：セキュリティの上書きを決定します。",
+  "gui.chestsorter.tooltip.authority_header": "権限管理",
+  "gui.chestsorter.tooltip.authority_desc": "・プレイヤーをクリックして権限を設定します。",
+  "gui.chestsorter.tooltip.guide_header": "受信機ガイド",
+  "gui.chestsorter.tooltip.guide_only": "・ONLY：指定したアイテムを上限まで受け入れます。",
+  "gui.chestsorter.tooltip.guide_except": "・EXCEPT：指定したアイテム以外をすべて受け入れます。",
+  "gui.chestsorter.tooltip.guide_burn": "・BURN：一致するアイテムを完全に破壊します。",
+  "gui.chestsorter.tooltip.guide_scroll": "・スロットをスクロールして上限数を調整します。",
+  "gui.chestsorter.tooltip.authority_slot_header": "権限",
+  "gui.chestsorter.tooltip.authority_slot_desc": "この受信機を使用できるプレイヤーを管理します。",
+  "gui.chestsorter.tooltip.cycle_mode": "Ctrl + 左クリックでモードを切り替え",
+  "gui.chestsorter.tooltip.except_warning": "警告：ONLYフィルターが存在する場合、効果がありません！",
+  "gui.chestsorter.tooltip.destroys_warning": "一致するアイテムを破壊します！",
+
+  "gui.chestsorter.burn.title": "バーンモード警告",
+  "gui.chestsorter.burn.message": "一致するアイテムは完全に破壊されます！",
+  "gui.chestsorter.burn.confirm_question": "本当に続行しますか？"
 }

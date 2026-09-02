@@ -50,7 +50,7 @@ public class FilterContainer implements Container {
     }
 
     @Override
-    public void setItem(int slot, ItemStack stack) {
+    public void setItem(int slot, @NonNull ItemStack stack) {
         config.setFilterItem(slot, stack.isEmpty() ? Items.AIR : stack.getItem());
         onChange.run();
     }
@@ -66,7 +66,7 @@ public class FilterContainer implements Container {
     }
 
     @Override
-    public boolean stillValid(net.minecraft.world.entity.player.Player player) {
+    public boolean stillValid(net.minecraft.world.entity.player.@NonNull Player player) {
         return true;
     }
 

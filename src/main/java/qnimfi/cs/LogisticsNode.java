@@ -59,8 +59,8 @@ public class LogisticsNode {
         return receivers;
     }
 
-    public boolean addReceiver(BlockPos receiver) {
-        return receivers.add(receiver);
+    public void addReceiver(BlockPos receiver) {
+        receivers.add(receiver);
     }
 
     public boolean removeReceiver(BlockPos receiver) {

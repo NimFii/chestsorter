@@ -17,13 +17,17 @@ public class LinkerState {
         return STATES.computeIfAbsent(player.getUUID(), _ -> new LinkerState());
     }
 
+    private int ticksInConnectionMode = 0;
+
+    public BlockPos getSelectedSender() { return selectedSender; }
+
     public void setSelectedSender(BlockPos pos) {
         this.selectedSender = pos;
+        this.ticksInConnectionMode = 0; // Reset timer on start
     }
 
-    public BlockPos getSelectedSender() {
-        return selectedSender;
-    }
+    public int getTicksInConnectionMode() { return ticksInConnectionMode; }
+    public void incrementTicks() { this.ticksInConnectionMode++; }
 
     public boolean hasSender() {
         return selectedSender != null;

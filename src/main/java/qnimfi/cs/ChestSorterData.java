@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
 
@@ -44,7 +45,7 @@ public class ChestSorterData extends SavedData {
             Identifier.fromNamespaceAndPath(ChestSorter.MOD_ID, "chest_sorter"),
             ChestSorterData::new,
             CODEC,
-            null
+            DataFixTypes.SAVED_DATA_COMMAND_STORAGE
     );
 
     public ChestSorterData() {}

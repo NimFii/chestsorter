@@ -9,13 +9,11 @@ import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
 import qnimfi.cs.network.NodeLinkData;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class LogisticsManager {
 
-    private static ChestSorterData getData(ServerLevel world) {
+    static ChestSorterData getData(ServerLevel world) {
         return world.getDataStorage().computeIfAbsent(
                 ChestSorterData.TYPE
         );
@@ -26,27 +24,6 @@ public class LogisticsManager {
             BlockPos position
     ) {
         return getData(world).getNode(position);
-    }
-
-    public static LogisticsNode getOrCreateNode(
-            ServerLevel world,
-            BlockPos position,
-            ServerPlayer player
-    ) {
-        ChestSorterData data = getData(world);
-
-        LogisticsNode node = data.getNode(position);
-
-        if (node == null) {
-            node = new LogisticsNode(
-                    position,
-                    player.getUUID()
-            );
-
-            data.addNode(node);
-        }
-
-        return node;
     }
 
     public static ConnectionResult connect(
@@ -236,5 +213,51 @@ public class LogisticsManager {
 
     public static ReceiverConfig getConfigIfPresent(ServerLevel world, BlockPos pos) {
         return getData(world).receiverConfigs.get(pos);
+    }
+
+    public static Map<BlockPos, ReceiverConfig> getReceiverConfigsForPlayer(ServerLevel level, UUID playerId) {
+        Map<BlockPos, ReceiverConfig> map = new HashMap<>();
+        for (NodeLinkData node : getOwnedNodeLinks(level, playerId)) {
+            for (BlockPos receiverPos : node.receivers()) {
+                ReceiverConfig config = getConfigIfPresent(level, receiverPos);
+                if (config != null) {
+                    map.put(receiverPos, config);
+                }
+            }
+        }
+        return map;
+    }
+
+    public static boolean canUseReceiver(ServerLevel world, BlockPos receiverPos, ServerPlayer player, AuthorityPermission permission) {
+        if (canConfigureReceiver(world, receiverPos, player)) {
+            return true;
+        }
+
+        ReceiverConfig config = getConfigIfPresent(world, receiverPos);
+        if (config == null) return false;
+
+        return config.getPermissions(player.getUUID()).permissions(permission);
+    }
+
+    public static boolean hasAuthority(ServerLevel world, BlockPos receiverPos, ServerPlayer player) {
+        return !canUseReceiver(world, receiverPos, player, AuthorityPermission.AUTHORITY);
+    }
+
+    public static void setPermission(ServerLevel world, BlockPos receiverPos, UUID targetPlayer, AuthorityPermission permission, boolean enabled) {
+        ChestSorterData data = getData(world);
+        ReceiverConfig config = data.getOrCreateConfig(receiverPos);
+
+        ReceiverConfig.ReceiverPermissions old = config.getPermissions(targetPlayer);
+
+        ReceiverConfig.ReceiverPermissions updated = switch (permission) {
+            case GIZMOS -> new ReceiverConfig.ReceiverPermissions(enabled, old.filter(), old.settings(), old.authority(), old.connect());
+            case FILTER -> new ReceiverConfig.ReceiverPermissions(old.gizmos(), enabled, old.settings(), old.authority(), old.connect());
+            case SETTINGS -> new ReceiverConfig.ReceiverPermissions(old.gizmos(), old.filter(), enabled, old.authority(), old.connect());
+            case AUTHORITY -> new ReceiverConfig.ReceiverPermissions(old.gizmos(), old.filter(), old.settings(), enabled, old.connect());
+            case CONNECT -> new ReceiverConfig.ReceiverPermissions(old.gizmos(), old.filter(), old.settings(), old.authority(), enabled);
+        };
+
+        config.setPermissions(targetPlayer, updated);
+        data.setDirty();
     }
 }

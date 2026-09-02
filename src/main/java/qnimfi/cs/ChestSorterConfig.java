@@ -17,6 +17,8 @@ public class ChestSorterConfig {
     private static ChestSorterConfig INSTANCE;
 
     public int filterSlots = 9;
+    public double senderReachDistance = -1.0; // e.g., 32.0 blocks or -1 to ignore
+    public int connectionTimeoutTicks = -1;    // e.g., 600 ticks (30s) or -1 to ignore
 
     public static ChestSorterConfig get() {
         if (INSTANCE == null) INSTANCE = load();

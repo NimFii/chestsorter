@@ -47,7 +47,8 @@ public class ChestInteractionHandler {
         // Normal RMB outside connection mode:
         boolean isSender = LogisticsManager.getNode(serverLevel, pos) != null
                 && LogisticsManager.isOwner(serverLevel, pos, serverPlayer);
-        boolean isReceiver = LogisticsManager.canConfigureReceiver(serverLevel, pos, serverPlayer);
+        boolean isReceiver = LogisticsManager.canUseReceiver(serverLevel, pos, serverPlayer, AuthorityPermission.FILTER)
+                || LogisticsManager.canUseReceiver(serverLevel, pos, serverPlayer, AuthorityPermission.SETTINGS);
 
         if (isReceiver) {
             openReceiverConfig(serverPlayer, serverLevel, pos);
@@ -87,10 +88,18 @@ public class ChestInteractionHandler {
     private static InteractionResult handleConnectionClick(ServerPlayer player, ServerLevel world, net.minecraft.core.BlockPos pos, LinkerState state) {
         var senderPos = state.getSelectedSender();
 
-        // Check if the sender chest was destroyed mid-connection!
+        // Check reach distance config
+        double maxReach = ChestSorterConfig.get().senderReachDistance;
+        if (maxReach > 0 && senderPos.distToCenterSqr(player.position()) > maxReach * maxReach) {
+            LinkerState.clear(player);
+            player.sendSystemMessage(Component.translatable("chest_interaction.chestsorter.out_of_reach"), true);
+            return InteractionResult.SUCCESS;
+        }
+
+        // Check if the sender chest was destroyed mid-connection
         if (!world.getBlockState(senderPos).is(Blocks.CHEST)) {
             LinkerState.clear(player);
-            ChestSorter.LOGGER.info("Sender chest is missing! Connection mode cancelled.");
+            player.sendSystemMessage(Component.translatable("chest_interaction.chestsorter.sender_missing"), true);
             return InteractionResult.SUCCESS;
         }
 
@@ -141,11 +150,9 @@ public class ChestInteractionHandler {
                     Component.translatable("chest_interaction.chestsorter.receiver_not_owner"), true
             );
 
-            case NULL -> {
-                player.sendSystemMessage(
-                        Component.translatable("chest_interaction.chestsorter.receiver_null"), true
-                );
-            }
+            case NULL -> player.sendSystemMessage(
+                    Component.translatable("chest_interaction.chestsorter.receiver_null"), true
+            );
         }
 
         return InteractionResult.SUCCESS;
@@ -164,7 +171,7 @@ public class ChestInteractionHandler {
             public net.minecraft.world.inventory.AbstractContainerMenu createMenu(
                     int syncId,
                     net.minecraft.world.entity.player.@NonNull Inventory inv,
-                    Player p
+                    @NonNull Player p
             ) {
                 return new ChestLinkerConfigMenu(syncId, inv, world, pos);
             }

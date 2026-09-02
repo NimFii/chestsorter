@@ -1,11 +1,11 @@
 package qnimfi.cs.network;
 
-import com.mojang.serialization.Codec;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.NonNull;
 import qnimfi.cs.ChestSorter;
 
 public record SetFilterPayload(int slot, int itemId)
@@ -34,7 +34,7 @@ public record SetFilterPayload(int slot, int itemId)
             );
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public @NonNull Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 }

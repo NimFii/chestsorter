@@ -16,6 +16,10 @@
   "chest_interaction.chestsorter.receiver_not_owner": "Jūs neesat šī sūtītāja īpašnieks.",
   "chest_interaction.chestsorter.receiver_null": "Kaut kas nogāja greizi.",
   "chest_interaction.chestsorter.receiver_config_open": "Saņēmēja iestatījumi.",
+  "chest_interaction.chestsorter.receiver_config_settings": "Saņēmēja konfigurācija.",
+  "chest_interaction.chestsorter.out_of_reach": "Jūs esat par tālu no sūtītāja. Savienojums tiek pārtraukts.",
+  "chest_interaction.chestsorter.sender_missing": "Sūtītājs nav atrasts. Savienojums tiek pārtraukts.",
+  "chest_interaction.chestsorter.connection_timeout": "Pārāk ilgi nekas nenotika. Savienojums tiek pārtraukts.",
 
   "hud.chestsorter.connection_mode": "§e[Savienojuma režīms] §fLabais klikšķis uz sūtītāja lādi, lai pabeigtu",
   "hud.chestsorter.action.finish": "§e[Labais klikšķis, lai pabeigtu]",
@@ -31,5 +35,39 @@
 
   "menu.chestsorter.tooltip.scroll": "§7Ritināt vid.pel., lai palielinātu/samazinātu daudzumu",
   "menu.chestsorter.tooltip.shift_scroll": "§7Shift + Ritināt, lai mainītu par 16",
-  "menu.chestsorter.tooltip.filtered_item": "Filtrētais priekšmets"
+  "menu.chestsorter.tooltip.filtered_item": "Filtrētais priekšmets",
+
+  "gui.chestsorter.confirm": "Apstiprināt",
+  "gui.chestsorter.cancel": "Atcelt",
+  "gui.chestsorter.settings": "Iestatījumi",
+  "gui.chestsorter.return": "Atpakaļ",
+  "gui.chestsorter.authority": "Pilnvaras",
+  "gui.chestsorter.loading": "Ielādē...",
+
+  "gui.chestsorter.permission.gizmos": "Vizuāli marķieri",
+  "gui.chestsorter.permission.filter": "Filtrs",
+  "gui.chestsorter.permission.settings": "Iestatījumi",
+  "gui.chestsorter.permission.authority": "Pilnvaras",
+  "gui.chestsorter.permission.connect": "Savienot",
+  "gui.chestsorter.state.on": "IESL.",
+  "gui.chestsorter.state.off": "IZSL.",
+
+  "gui.chestsorter.tooltip.settings_header": "Saņēmēja iestatījumi",
+  "gui.chestsorter.tooltip.settings_authority_slot": "• Pilnvaru vieta: nosaka drošības pārvaldību.",
+  "gui.chestsorter.tooltip.authority_header": "Pilnvaru pārvaldība",
+  "gui.chestsorter.tooltip.authority_desc": "• Noklikšķiniet uz spēlētāja, lai konfigurētu pilnvaras.",
+  "gui.chestsorter.tooltip.guide_header": "Saņēmēja pamācība",
+  "gui.chestsorter.tooltip.guide_only": "• ONLY: pieņem norādīto priekšmetu līdz maksimālajam daudzumam.",
+  "gui.chestsorter.tooltip.guide_except": "• EXCEPT: pieņem visu, izņemot norādītos priekšmetus.",
+  "gui.chestsorter.tooltip.guide_burn": "• BURN: neatgriezeniski iznīcina atbilstošos priekšmetus.",
+  "gui.chestsorter.tooltip.guide_scroll": "• Ritiniet slotus, lai mainītu maksimālo daudzumu.",
+  "gui.chestsorter.tooltip.authority_slot_header": "Pilnvaras",
+  "gui.chestsorter.tooltip.authority_slot_desc": "Pārvaldiet, kurš drīkst izmantot šo saņēmēju.",
+  "gui.chestsorter.tooltip.cycle_mode": "Ctrl + kreisais klikšķis, lai mainītu režīmu",
+  "gui.chestsorter.tooltip.except_warning": "Brīdinājums: nedarbojas, ja pastāv ONLY filtri!",
+  "gui.chestsorter.tooltip.destroys_warning": "Iznīcina atbilstošos priekšmetus!",
+
+  "gui.chestsorter.burn.title": "BURN REŽĪMA BRĪDINĀJUMS",
+  "gui.chestsorter.burn.message": "Atbilstošie priekšmeti tiks neatgriezeniski iznīcināti!",
+  "gui.chestsorter.burn.confirm_question": "Vai tiešām vēlaties turpināt?"
 }

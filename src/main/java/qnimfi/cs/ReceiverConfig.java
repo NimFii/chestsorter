@@ -13,11 +13,48 @@ import java.util.Optional;
 
 public class ReceiverConfig {
 
-    public static final int DEFAULT_MAX = 64;
+    public record ReceiverPermissions(boolean gizmos, boolean filter, boolean settings, boolean authority, boolean connect) {
+        public static final ReceiverPermissions DEFAULT_GUEST = new ReceiverPermissions(false, false, false, false, false);
+        public static final ReceiverPermissions DEFAULT_OWNER = new ReceiverPermissions(true, true, true, true, true);
+
+        public boolean permissions(AuthorityPermission permission) {
+            return switch (permission) {
+                case GIZMOS -> gizmos;
+                case FILTER -> filter;
+                case SETTINGS -> settings;
+                case AUTHORITY -> authority;
+                case CONNECT -> connect;
+            };
+        }
+
+        public static final Codec<ReceiverPermissions> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.BOOL.fieldOf("gizmos").orElse(false).forGetter(ReceiverPermissions::gizmos),
+                Codec.BOOL.fieldOf("filter").orElse(false).forGetter(ReceiverPermissions::filter),
+                Codec.BOOL.fieldOf("settings").orElse(false).forGetter(ReceiverPermissions::settings),
+                Codec.BOOL.fieldOf("authority").orElse(false).forGetter(ReceiverPermissions::authority),
+                Codec.BOOL.fieldOf("connect").orElse(false).forGetter(ReceiverPermissions::connect)
+        ).apply(instance, ReceiverPermissions::new));
+    }
+
+    private final Map<java.util.UUID, ReceiverPermissions> playerPermissions = new HashMap<>();
+
+    public ReceiverPermissions getPermissions(java.util.UUID playerUuid) {
+        return playerPermissions.getOrDefault(playerUuid, ReceiverPermissions.DEFAULT_GUEST);
+    }
+
+    public void setPermissions(java.util.UUID playerUuid, ReceiverPermissions permissions) {
+        if (permissions == null) {
+            playerPermissions.remove(playerUuid);
+        } else {
+            playerPermissions.put(playerUuid, permissions);
+        }
+    }
+
+    public static final int INFINITY_MAX = -1;
 
     private final BlockPos position;
     private final Map<Integer, FilterEntry> filters = new HashMap<>();
-    private int slotCount;
+    private final int slotCount;
 
     public ReceiverConfig(BlockPos position) {
         this(position, ChestSorterConfig.get().filterSlots);
@@ -31,13 +68,13 @@ public class ReceiverConfig {
     public BlockPos getPosition() { return position; }
     public int getSlotCount() { return slotCount; }
 
-    public void setSlotCount(int slotCount) {
-        this.slotCount = Math.max(1, slotCount);
-        filters.keySet().removeIf(slot -> slot >= this.slotCount);
-    }
-
     public Optional<FilterEntry> getFilter(int slot) {
         return Optional.ofNullable(filters.get(slot));
+    }
+
+    public Item getItem(int slot) {
+        FilterEntry entry = filters.get(slot);
+        return entry != null ? entry.item() : Items.AIR;
     }
 
     public void setFilterItem(int slot, Item item) {
@@ -48,25 +85,48 @@ public class ReceiverConfig {
             return;
         }
 
-        // Prevent duplicate item types across different filter slots
         for (Map.Entry<Integer, FilterEntry> entry : filters.entrySet()) {
             if (!entry.getKey().equals(slot) && entry.getValue().item() == item) {
                 return;
             }
         }
 
-        int keepMax = filters.containsKey(slot) ? filters.get(slot).maxCount() : DEFAULT_MAX;
-        filters.put(slot, new FilterEntry(item, keepMax));
+        FilterEntry existing = filters.get(slot);
+        int keepMax = existing != null ? existing.maxCount() : INFINITY_MAX;
+        FilterType keepType = existing != null ? existing.type() : FilterType.ONLY;
+        filters.put(slot, new FilterEntry(item, keepMax, keepType));
     }
 
     public void setFilterMax(int slot, int max) {
         FilterEntry existing = filters.get(slot);
         if (existing == null) return;
-        filters.put(slot, new FilterEntry(existing.item(), Math.max(0, max)));
+
+        // Wrap-around logic for infinity (-1) and scrolling bounds
+        int newMax = max;
+        if (max < -1) {
+            newMax = INFINITY_MAX;
+        }
+        filters.put(slot, new FilterEntry(existing.item(), newMax, existing.type()));
     }
 
-    public boolean acceptsItem(Item item) {
-        return filters.values().stream().anyMatch(f -> f.item() == item);
+    public void cycleFilterType(int slot) {
+        FilterEntry entry = filters.get(slot);
+        if (entry != null) {
+            FilterType nextType = switch (entry.type()) {
+                case ONLY -> FilterType.EXCEPT;
+                case EXCEPT -> FilterType.BURN;
+                case BURN -> FilterType.ONLY;
+            };
+
+            int newMax = entry.type() == FilterType.BURN ? -1 : entry.maxCount();
+
+            filters.put(slot, new FilterEntry(entry.item(), newMax, nextType));
+        }
+    }
+
+    public boolean isBurnItem(Item item) {
+        return filters.values().stream()
+                .anyMatch(f -> f.item() == item && f.type() == FilterType.BURN);
     }
 
     public int findFirstAvailableSlot() {
@@ -89,11 +149,24 @@ public class ReceiverConfig {
         ).apply(instance, FilterSlotEntry::new));
     }
 
-    private record SerialForm(BlockPos position, int slotCount, List<FilterSlotEntry> filters) {
+    private record PlayerPermissionEntry(java.util.UUID uuid, ReceiverPermissions permissions) {
+        static final Codec<PlayerPermissionEntry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                net.minecraft.core.UUIDUtil.CODEC.fieldOf("uuid").forGetter(PlayerPermissionEntry::uuid),
+                ReceiverPermissions.CODEC.fieldOf("permissions").forGetter(PlayerPermissionEntry::permissions)
+        ).apply(instance, PlayerPermissionEntry::new));
+    }
+
+    private record SerialForm(
+            BlockPos position,
+            int slotCount,
+            List<FilterSlotEntry> filters,
+            List<PlayerPermissionEntry> permissions
+    ) {
         static final Codec<SerialForm> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 BlockPos.CODEC.fieldOf("position").forGetter(SerialForm::position),
                 Codec.INT.fieldOf("slot_count").forGetter(SerialForm::slotCount),
-                FilterSlotEntry.CODEC.listOf().fieldOf("filters").forGetter(SerialForm::filters)
+                FilterSlotEntry.CODEC.listOf().fieldOf("filters").forGetter(SerialForm::filters),
+                PlayerPermissionEntry.CODEC.listOf().optionalFieldOf("permissions", List.of()).forGetter(SerialForm::permissions)
         ).apply(instance, SerialForm::new));
     }
 
@@ -103,6 +176,9 @@ public class ReceiverConfig {
                 for (FilterSlotEntry e : serial.filters()) {
                     config.filters.put(e.slot(), e.entry());
                 }
+                for (PlayerPermissionEntry p : serial.permissions()) {
+                    config.playerPermissions.put(p.uuid(), p.permissions());
+                }
                 return config;
             },
             config -> new SerialForm(
@@ -110,11 +186,28 @@ public class ReceiverConfig {
                     config.slotCount,
                     config.filters.entrySet().stream()
                             .map(en -> new FilterSlotEntry(en.getKey(), en.getValue()))
+                            .toList(),
+                    config.playerPermissions.entrySet().stream()
+                            .map(en -> new PlayerPermissionEntry(en.getKey(), en.getValue()))
                             .toList()
             )
     );
 
     public Optional<FilterEntry> getFilterFor(Item item) {
-        return filters.values().stream().filter(f -> f.item() == item).findFirst();
+        // 1. Direct match check (ONLY, EXCEPT, BURN)
+        for (FilterEntry entry : filters.values()) {
+            if (entry.item() == item) {
+                return Optional.of(entry);
+            }
+        }
+
+        // 2. If item is not explicitly listed, check if EXCEPT filters are present.
+        // If there are EXCEPT filters, unlisted items are allowed.
+        boolean hasExcept = filters.values().stream().anyMatch(f -> f.type() == FilterType.EXCEPT);
+        if (hasExcept) {
+            return Optional.of(new FilterEntry(item, INFINITY_MAX, FilterType.EXCEPT));
+        }
+
+        return Optional.empty();
     }
 }

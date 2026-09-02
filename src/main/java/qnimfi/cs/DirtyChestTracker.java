@@ -16,7 +16,7 @@ public class DirtyChestTracker {
 
     public static void markDirty(Level level, BlockPos pos) {
         if (level.isClientSide()) return;
-        DIRTY.computeIfAbsent(level.dimension(), k -> Collections.synchronizedSet(new HashSet<>()))
+        DIRTY.computeIfAbsent(level.dimension(), _ -> Collections.synchronizedSet(new HashSet<>()))
                 .add(pos.immutable());
     }
 
